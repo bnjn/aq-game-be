@@ -4,9 +4,9 @@
   "description": "",
   "main": "./build/server.js",
   "scripts": {
-    "predev": "npm run clean",
-    "prestart": "npm run clean",
-    "dev": "nodemon ./build/server.js",
+    "predev": "npm run clean && npm run build",
+    "prestart": "npm run clean && npm run build",
+    "dev": "nodemon --watch build/server.js",
     "test": "jest --watchAll",
     "build": "tsc --build",
     "clean": "tsc --build --clean"
