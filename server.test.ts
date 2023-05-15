@@ -23,9 +23,9 @@ describe('getCountryList', () => {
     ]
   }
 
-  it('returns a list of available countries from AirVisual API', () => {
+  it('returns a list of available countries from AirVisual API', async () => {
     mockedAxios.get.mockResolvedValue(mockCountryData);
-    const country : string = server.getCountryList();
+    const country : string = await server.getCountryList();
     expect(country).toContain('Australia');
   });
 });
