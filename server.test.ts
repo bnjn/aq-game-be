@@ -28,4 +28,11 @@ describe('getCountryList', () => {
     const countries: string = await server.getCountryList();
     expect(countries).toContain('Australia');
   });
+
+  it('returns an array of at least one country', async () => {
+    mockedAxios.get.mockResolvedValue(mockCountryData);
+    const countries: string[] = await server.getCountryList();
+    expect(countries).toBeInstanceOf(Array);
+    expect(countries.length).toBeGreaterThan(0);
+  });
 });
