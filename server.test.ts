@@ -29,7 +29,7 @@ describe('getCountryList', () => {
 
   it('returns a country', async () => {
     mockedAxios.get.mockResolvedValue(mockCountryDataSuccess);
-    const countries: string = await server.getCountryList();
+    const countries: string[] = await server.getCountryList();
     expect(countries).toContain('Australia');
   });
 
@@ -52,3 +52,29 @@ describe('getCountryList', () => {
         .rejects.toThrow('too_many_requests')
   });
 });
+
+describe('getStateList', () => {
+  const mockChinaStateDataSuccess : object = {
+    "status": "success",
+    "data": [
+      {
+        "state": "Anhui"
+      },
+      {
+        "state": "Beijing"
+      },
+      {
+        "state": "Chongqing"
+      },
+      {
+        "state": "Fujian"
+      }
+    ]
+  }
+
+  it('returns a state when passed a country', async () => {
+    mockedAxios.get.mockResolvedValue(mockChinaStateDataSuccess);
+    const states: string[] = await server.getStateList('China');
+    expect(states).toContain('Beijing');
+  });
+})
