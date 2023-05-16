@@ -10,3 +10,7 @@ export async function getCountryList() : Promise<string[]> {
     }
     return response.data.map((country: { country: object }) => country.country);
 }
+
+export async function getStateList(country: string) : Promise<string[]> {
+    return ['Beijing'];
+}
