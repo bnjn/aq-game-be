@@ -23,9 +23,9 @@ describe('getCountryList', () => {
     ]
   }
 
-  it('returns an array containing a country string', async () => {
+  it('returns a country', async () => {
     mockedAxios.get.mockResolvedValue(mockCountryData);
-    const countries : string[] = await server.getCountryList();
+    const countries: string = await server.getCountryList();
     expect(countries).toContain('Australia');
   });
 });
