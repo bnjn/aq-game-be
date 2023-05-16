@@ -1,3 +1,3 @@
-export function getCountryList() : string {
-    return 'Australia';
+export function getCountryList() : string[] {
+    return ['Australia'];
 }
