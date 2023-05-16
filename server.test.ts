@@ -35,4 +35,10 @@ describe('getCountryList', () => {
     expect(countries).toBeInstanceOf(Array);
     expect(countries.length).toBeGreaterThan(0);
   });
+
+  it('returns another country', async () => {
+    mockedAxios.get.mockResolvedValue(mockCountryData);
+    const countries: string[] = await server.getCountryList();
+    expect(countries).toContain('Argentina');
+  });
 });
