@@ -2,6 +2,9 @@
 
 ### Setup
 - Run `npm install`.
+- Create `.env` file in base directory.
+- Get API key from https://www.iqair.com/dashboard/api
+- Add `AIRVISUAL_API_KEY="yourapikey"` to `.env`.
 
 ### Usage
 - Run `npm start`.
