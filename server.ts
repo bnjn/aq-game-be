@@ -3,10 +3,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export async function getCountryList() : Promise<string[]> {
-    const response = await axios.get(`https://api.airvisual.com/v2/countries?key=${process.env.AIRVISUAL_API_KEY}`);
-    if (response.status.toString() !== 'success') {
-        throw new Error(`Error status from AirVisual API: ${response.status.toString()}`);
+export async function getCountryList() : Promise<any> {
+    try {
+        const response = await axios.get(`https://api.airvisual.com/v2/countries?key=${process.env.AIRVISUAL_API_KEY}`);
+        return Promise.resolve(response.data.data.map((country: { country: object }) => country.country));
+    } catch (error: any) {
+        if (error.response.data.status === 'fail') {
+            return Promise.reject(new Error(`Error status from AirVisual API: ${error.response.data.data.message}`));
+        }
     }
     return response.data.map((country: { country: object }) => country.country);
 }
@@ -26,3 +30,10 @@ export async function getStateList(country: string) : Promise<any> {
         }
     }
 }
+
+// Live API tests
+// getCountryList().then((data) => console.log(data)).catch(e => console.log(e))
+// getStateList('United Kingdom').then((data) => console.log(data)).catch((e) => console.log(e));
+// getStateList('China').then((data) => console.log(data)).catch((e) => console.log(e));
+// getStateList('').then((data) => console.log(data)).catch((e) => console.log(e));
+// getStateList('imagination land').then((data) => console.log(data)).catch((e) => console.log(e));
