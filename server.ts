@@ -12,7 +12,6 @@ export async function getCountryList() : Promise<any> {
             return Promise.reject(new Error(`Error status from AirVisual API: ${error.response.data.data.message}`));
         }
     }
-    return response.data.map((country: { country: object }) => country.country);
 }
 
 
