@@ -12,6 +12,6 @@
 ### Dev
 - `npm run dev` for hot reloading.
 - `npm test` to run unit tests.
-- `tsc -w` for TypeScript compiler.
+- `npm run tsc` for TypeScript compiler.
 - `npm run build` to build ts files.
 - `npm run clean` to clean build files.
