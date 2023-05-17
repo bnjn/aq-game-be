@@ -6,25 +6,34 @@ jest.mock('axios');
 
 describe('getCountryList', () => {
   const mockCountryDataSuccess : object = {
-    "status": "success",
-    "data": [
-      {
-        "country": "Andorra"
-      },
-      {
-        "country": "Argentina"
-      },
-      {
-        "country": "Australia"
-      },
-      {
-        "country": "Austria"
-      }
-    ]
+    "data": {
+      "status": "success",
+      "data": [
+        {
+          "country": "Andorra"
+        },
+        {
+          "country": "Argentina"
+        },
+        {
+          "country": "Australia"
+        },
+        {
+          "country": "Austria"
+        }
+      ]
+    }
   }
 
   const mockCountryDataError : object = {
-    "status": "too_many_requests"
+    "response": {
+      "data": {
+        "status": "fail",
+        "data": {
+          "message": "too_many_requests"
+        }
+      }
+    }
   }
 
   it('returns a country', async () => {
@@ -47,29 +56,52 @@ describe('getCountryList', () => {
   });
 
   it('throws error when response status is not success', async () => {
-    mockedAxios.get.mockResolvedValue(mockCountryDataError);
-    await expect(async () => await server.getCountryList())
-        .rejects.toThrow('too_many_requests')
+    mockedAxios.get.mockRejectedValue(mockCountryDataError);
+    await expect(server.getCountryList()).rejects.toThrow('too_many_requests')
   });
 });
 
 describe('getStateList', () => {
   const mockChinaStateDataSuccess : object = {
-    "status": "success",
-    "data": [
-      {
-        "state": "Anhui"
-      },
-      {
-        "state": "Beijing"
-      },
-      {
-        "state": "Chongqing"
-      },
-      {
-        "state": "Fujian"
+    "data": {
+      "status": "success",
+      "data": [
+        {
+          "state": "Anhui"
+        },
+        {
+          "state": "Beijing"
+        },
+        {
+          "state": "Chongqing"
+        },
+        {
+          "state": "Fujian"
+        }
+      ]
+    }
+  }
+
+  const mockChinaStateDataNotFound : object = {
+    "response": {
+      "data": {
+        "status": "fail",
+        "data": {
+          "message": "country_not_found"
+        }
       }
-    ]
+    }
+  }
+
+  const mockChinaStateDataError : object = {
+    "response": {
+      "data": {
+        "status": "fail",
+        "data": {
+          "message": "incorrect_api_key"
+        }
+      }
+    }
   }
 
   it('returns a state when passed a country', async () => {
@@ -77,4 +109,27 @@ describe('getStateList', () => {
     const states: string[] = await server.getStateList('China');
     expect(states).toContain('Beijing');
   });
-})
+
+  it('returns an array of at least one state when passed a country', async () => {
+    mockedAxios.get.mockResolvedValue(mockChinaStateDataSuccess);
+    const states: string[] = await server.getStateList('China');
+    expect(states).toBeInstanceOf(Array);
+    expect(states.length).toBeGreaterThan(0);
+  });
+
+  it('returns another state when passed a country', async () => {
+    mockedAxios.get.mockResolvedValue(mockChinaStateDataSuccess);
+    const states: string[] = await server.getStateList('China');
+    expect(states).toContain('Fujian');
+  });
+
+  it('throws error when input country not found', async () => {
+    mockedAxios.get.mockRejectedValue(mockChinaStateDataNotFound);
+    await expect(server.getStateList('Imagination Land')).rejects.toThrow('country not found "Imagination Land"')
+  });
+
+  it('throws error on other API error', async () => {
+    mockedAxios.get.mockRejectedValue(mockChinaStateDataError);
+    await expect(server.getStateList('China')).rejects.toThrow('incorrect_api_key')
+  });
+});
