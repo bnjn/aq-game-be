@@ -31,7 +31,7 @@ export async function getStateList(country: string) : Promise<any> {
 }
 
 export function getCityList(country: string, state: string): string[] {
-    return ['Barnsbury']
+    return ['Barnsbury', 'Ashford']
 }
 
 // Live API tests
