@@ -30,6 +30,10 @@ export async function getStateList(country: string) : Promise<any> {
     }
 }
 
+export function getCityList(country: string, state: string): string[] {
+    return ['Barnsbury']
+}
+
 // Live API tests
 // getCountryList().then((data) => console.log(data)).catch(e => console.log(e))
 // getStateList('United Kingdom').then((data) => console.log(data)).catch((e) => console.log(e));
