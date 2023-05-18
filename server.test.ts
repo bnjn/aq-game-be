@@ -133,3 +133,34 @@ describe('getStateList', () => {
     await expect(server.getStateList('China')).rejects.toThrow('incorrect_api_key')
   });
 });
+
+describe('getCityList', () => {
+  const mockUkCityDataSuccess: object = {
+    "data": {
+      "status": "success",
+      "data": [
+        {
+          "city": "Ascot"
+        },
+        {
+          "city": "Ashford"
+        },
+        {
+          "city": "Ashton in Makerfield"
+        },
+        {
+          "city": "Ashton-under-Lyne"
+        },
+        {
+          "city": "Barnsbury"
+        }
+      ]
+    }
+  }
+
+  it('returns a list of cities when given a country and state.', async () => {
+    mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
+    const cities: string[] = await server.getCityList('United Kingdom', 'England');
+    expect(cities).toContain('Barnsbury');
+  });
+});
