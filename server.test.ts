@@ -163,4 +163,11 @@ describe('getCityList', () => {
     const cities: string[] = await server.getCityList('United Kingdom', 'England');
     expect(cities).toContain('Barnsbury');
   });
+
+  it('returns an array of at least one city when passed a country and state', async () => {
+    mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
+    const cities: string[] = await server.getCityList('United Kingdom', 'England');
+    expect(cities).toBeInstanceOf(Array);
+    expect(cities.length).toBeGreaterThan(0);
+  });
 });
