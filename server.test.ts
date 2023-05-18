@@ -170,4 +170,10 @@ describe('getCityList', () => {
     expect(cities).toBeInstanceOf(Array);
     expect(cities.length).toBeGreaterThan(0);
   });
+
+  it('returns a different city.', async () => {
+    mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
+    const cities: string[] = await server.getCityList('United Kingdom', 'England');
+    expect(cities).toContain('Ashford');
+  });
 });
