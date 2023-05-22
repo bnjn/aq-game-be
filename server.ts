@@ -31,6 +31,7 @@ export async function getStateList(country: string) : Promise<any> {
 }
 
 export function getCityList(country: string, state: string): string[] {
+    // AQ api responds with state_not_found if either the state or country are not found. Need to inform with a thrown error. Maybe validate against local data before making the call to the city endpoint?
     return ['Barnsbury', 'Ashford']
 }
 
