@@ -158,6 +158,17 @@ describe('getCityList', () => {
     }
   }
 
+  const mockUkCityDataNotFound : object = {
+    "response": {
+      "data": {
+        "status": "fail",
+        "data": {
+          "message": "country_not_found"
+        }
+      }
+    }
+  }
+
   it('returns a list of cities when given a country and state.', async () => {
     mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
     const cities: string[] = await server.getCityList('United Kingdom', 'England');
@@ -175,5 +186,10 @@ describe('getCityList', () => {
     mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
     const cities: string[] = await server.getCityList('United Kingdom', 'England');
     expect(cities).toContain('Ashford');
+  });
+
+  it('throws error when input country and/or state not found', async () => {
+    mockedAxios.get.mockRejectedValue(mockUkCityDataNotFound);
+    await expect(server.getCityList('Imagination Land', 'Nowhere')).rejects.toThrow('country/state not found "Imagination Land"/"Nowhere"')
   });
 });
