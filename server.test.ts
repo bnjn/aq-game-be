@@ -169,6 +169,17 @@ describe('getCityList', () => {
     }
   }
 
+  const mockUkCityDataError : object = {
+    "response": {
+      "data": {
+        "status": "fail",
+        "data": {
+          "message": "incorrect_api_key"
+        }
+      }
+    }
+  }
+
   it('returns a list of cities when given a country and state.', async () => {
     mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
     const cities: string[] = await server.getCityList('United Kingdom', 'England');
@@ -191,5 +202,10 @@ describe('getCityList', () => {
   it('throws error when input country and/or state not found', async () => {
     mockedAxios.get.mockRejectedValue(mockUkCityDataNotFound);
     await expect(server.getCityList('Imagination Land', 'Nowhere')).rejects.toThrow('country/state not found "Imagination Land"/"Nowhere"')
+  });
+
+  it('throws error on other API error', async () => {
+    mockedAxios.get.mockRejectedValue(mockUkCityDataError);
+    await expect(server.getStateList('China')).rejects.toThrow('incorrect_api_key')
   });
 });
