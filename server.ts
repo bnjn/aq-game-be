@@ -52,3 +52,4 @@ export async function getCityList(country: string, state: string): Promise<any> 
 // getStateList('China').then((data) => console.log(data)).catch((e) => console.log(e));
 // getStateList('').then((data) => console.log(data)).catch((e) => console.log(e));
 // getStateList('imagination land').then((data) => console.log(data)).catch((e) => console.log(e));
+// getCityList('United Kingdom', 'England').then((data) => console.log(data)).catch((e) => console.log(e));
