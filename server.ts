@@ -30,9 +30,20 @@ export async function getStateList(country: string) : Promise<any> {
     }
 }
 
-export function getCityList(country: string, state: string): string[] {
+export async function getCityList(country: string, state: string): Promise<any> {
     // AQ api responds with state_not_found if either the state or country are not found. Need to inform with a thrown error. Maybe validate against local data before making the call to the city endpoint?
-    return ['Barnsbury', 'Ashford']
+    try {
+        const response = await axios.get(`http://api.airvisual.com/v2/cities?state=${state}&country=${country}&key=${process.env.AIRVISUAL_API_KEY}`);
+        return Promise.resolve(response.data.data.map((city: { city: object }) => city.city));
+    } catch (error: any) {
+        if (error.response.data.status === 'fail') {
+            if (error.response.data.data.message === 'country_not_found') {
+                return Promise.reject(new Error(`AirVisual API: country/state not found "${country}"/"${state}"`));
+            } else {
+                return Promise.reject(new Error(`Error status from AirVisual API: ${error.response.data.data.message}`));
+            }
+        }
+    }
 }
 
 // Live API tests
