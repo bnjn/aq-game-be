@@ -1,4 +1,6 @@
-const server = require('./server');
+import exp from "constants";
+
+const server = require('./api');
 import axios from 'axios';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -207,5 +209,44 @@ describe('getCityList', () => {
   it('throws error on other API error', async () => {
     mockedAxios.get.mockRejectedValue(mockUkCityDataError);
     await expect(server.getStateList('China')).rejects.toThrow('incorrect_api_key')
+  });
+});
+
+describe('getPollutionData', () => {
+  const mockedPollutionData: object = {
+    "status": "success",
+    "data": {
+      "city": "Los Angeles",
+      "state": "California",
+      "country": "USA",
+      "current": {
+        "pollution": {
+          "ts": "2023-06-06T12:00:00.000Z",
+          "aqius": 32
+        }
+      }
+    }
+  }
+
+  type PollutionData = {
+    city: string,
+    state: string,
+    country: string,
+    last_updated: Date,
+    air_quality_index: number
+  }
+
+  it('returns the pollution data for a given city', async () => {
+    mockedAxios.get.mockResolvedValue(mockedPollutionData);
+    const pollutionData: PollutionData = await server.getPollutionData('USA', 'California', 'Los Angeles');
+    const expected: PollutionData = {
+      city: expect.any(String),
+      state: expect.any(String),
+      country: expect.any(String),
+      last_updated: expect.any(Date),
+      air_quality_index: expect.any(Number)
+    }
+
+    expect(pollutionData).toMatchObject<PollutionData>(expected);
   });
 });
