@@ -1,6 +1,6 @@
 import exp from "constants";
 
-const server = require('./api');
+const api = require('./api');
 import axios from 'axios';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -40,26 +40,26 @@ describe('getCountryList', () => {
 
   it('returns a country', async () => {
     mockedAxios.get.mockResolvedValue(mockCountryDataSuccess);
-    const countries: string[] = await server.getCountryList();
+    const countries: string[] = await api.getCountryList();
     expect(countries).toContain('Australia');
   });
 
   it('returns an array of at least one country', async () => {
     mockedAxios.get.mockResolvedValue(mockCountryDataSuccess);
-    const countries: string[] = await server.getCountryList();
+    const countries: string[] = await api.getCountryList();
     expect(countries).toBeInstanceOf(Array);
     expect(countries.length).toBeGreaterThan(0);
   });
 
   it('returns another country', async () => {
     mockedAxios.get.mockResolvedValue(mockCountryDataSuccess);
-    const countries: string[] = await server.getCountryList();
+    const countries: string[] = await api.getCountryList();
     expect(countries).toContain('Argentina');
   });
 
   it('throws error when response status is not success', async () => {
     mockedAxios.get.mockRejectedValue(mockCountryDataError);
-    await expect(server.getCountryList()).rejects.toThrow('too_many_requests')
+    await expect(api.getCountryList()).rejects.toThrow('too_many_requests')
   });
 });
 
@@ -108,31 +108,31 @@ describe('getStateList', () => {
 
   it('returns a state when passed a country', async () => {
     mockedAxios.get.mockResolvedValue(mockChinaStateDataSuccess);
-    const states: string[] = await server.getStateList('China');
+    const states: string[] = await api.getStateList('China');
     expect(states).toContain('Beijing');
   });
 
   it('returns an array of at least one state when passed a country', async () => {
     mockedAxios.get.mockResolvedValue(mockChinaStateDataSuccess);
-    const states: string[] = await server.getStateList('China');
+    const states: string[] = await api.getStateList('China');
     expect(states).toBeInstanceOf(Array);
     expect(states.length).toBeGreaterThan(0);
   });
 
   it('returns another state when passed a country', async () => {
     mockedAxios.get.mockResolvedValue(mockChinaStateDataSuccess);
-    const states: string[] = await server.getStateList('China');
+    const states: string[] = await api.getStateList('China');
     expect(states).toContain('Fujian');
   });
 
   it('throws error when input country not found', async () => {
     mockedAxios.get.mockRejectedValue(mockChinaStateDataNotFound);
-    await expect(server.getStateList('Imagination Land')).rejects.toThrow('country not found "Imagination Land"')
+    await expect(api.getStateList('Imagination Land')).rejects.toThrow('country not found "Imagination Land"')
   });
 
   it('throws error on other API error', async () => {
     mockedAxios.get.mockRejectedValue(mockChinaStateDataError);
-    await expect(server.getStateList('China')).rejects.toThrow('incorrect_api_key')
+    await expect(api.getStateList('China')).rejects.toThrow('incorrect_api_key')
   });
 });
 
@@ -184,31 +184,31 @@ describe('getCityList', () => {
 
   it('returns a list of cities when given a country and state.', async () => {
     mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
-    const cities: string[] = await server.getCityList('United Kingdom', 'England');
+    const cities: string[] = await api.getCityList('United Kingdom', 'England');
     expect(cities).toContain('Barnsbury');
   });
 
   it('returns an array of at least one city when passed a country and state', async () => {
     mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
-    const cities: string[] = await server.getCityList('United Kingdom', 'England');
+    const cities: string[] = await api.getCityList('United Kingdom', 'England');
     expect(cities).toBeInstanceOf(Array);
     expect(cities.length).toBeGreaterThan(0);
   });
 
   it('returns a different city.', async () => {
     mockedAxios.get.mockResolvedValue(mockUkCityDataSuccess);
-    const cities: string[] = await server.getCityList('United Kingdom', 'England');
+    const cities: string[] = await api.getCityList('United Kingdom', 'England');
     expect(cities).toContain('Ashford');
   });
 
   it('throws error when input country and/or state not found', async () => {
     mockedAxios.get.mockRejectedValue(mockUkCityDataNotFound);
-    await expect(server.getCityList('Imagination Land', 'Nowhere')).rejects.toThrow('country/state not found "Imagination Land"/"Nowhere"')
+    await expect(api.getCityList('Imagination Land', 'Nowhere')).rejects.toThrow('country/state not found "Imagination Land"/"Nowhere"')
   });
 
   it('throws error on other API error', async () => {
     mockedAxios.get.mockRejectedValue(mockUkCityDataError);
-    await expect(server.getStateList('China')).rejects.toThrow('incorrect_api_key')
+    await expect(api.getStateList('China')).rejects.toThrow('incorrect_api_key')
   });
 });
 
@@ -238,7 +238,7 @@ describe('getPollutionData', () => {
 
   it('returns the pollution data for a given city', async () => {
     mockedAxios.get.mockResolvedValue(mockedPollutionData);
-    const pollutionData: PollutionData = await server.getPollutionData('USA', 'California', 'Los Angeles');
+    const pollutionData: PollutionData = await api.getPollutionData('USA', 'California', 'Los Angeles');
     const expected: PollutionData = {
       city: expect.any(String),
       state: expect.any(String),
