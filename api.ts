@@ -3,6 +3,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+type PollutionData = {
+    city: string,
+    state: string,
+    country: string,
+    last_updated: Date,
+    air_quality_index: number
+}
+
 export async function getCountryList() : Promise<any> {
     try {
         const response = await axios.get(`https://api.airvisual.com/v2/countries?key=${process.env.AIRVISUAL_API_KEY}`);
@@ -43,6 +51,16 @@ export async function getCityList(country: string, state: string): Promise<any> 
                 return Promise.reject(new Error(`Error status from AirVisual API: ${error.response.data.data.message}`));
             }
         }
+    }
+}
+
+export async function getPollutionData(): Promise<PollutionData> {
+    return {
+        city: 'Los Angeles',
+        state: 'California',
+        country: 'USA',
+        last_updated: new Date(),
+        air_quality_index: 10
     }
 }
 
