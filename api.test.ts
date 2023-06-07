@@ -236,7 +236,7 @@ describe('getPollutionData', () => {
     air_quality_index: number
   }
 
-  it('returns the pollution data for a given city', async () => {
+  it('returns the pollution data in correct format', async () => {
     mockedAxios.get.mockResolvedValue(mockedPollutionData);
     const pollutionData: PollutionData = await api.getPollutionData('USA', 'California', 'Los Angeles');
     const expected: PollutionData = {
@@ -245,6 +245,20 @@ describe('getPollutionData', () => {
       country: expect.any(String),
       last_updated: expect.any(Date),
       air_quality_index: expect.any(Number)
+    }
+
+    expect(pollutionData).toMatchObject<PollutionData>(expected);
+  });
+
+  it('returns the pollution data for a city', async () => {
+    mockedAxios.get.mockResolvedValue(mockedPollutionData);
+    const pollutionData: PollutionData = await api.getPollutionData('United Kingdom', 'England', 'Bristol');
+    const expected: PollutionData = {
+      city: 'Bristol',
+      state: 'England',
+      country: 'United Kingdom',
+      last_updated: new Date('2023-06-06T12:00:00.000Z'),
+      air_quality_index: 20
     }
 
     expect(pollutionData).toMatchObject<PollutionData>(expected);
