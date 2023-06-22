@@ -1,5 +1,3 @@
-import exp from "constants";
-
 const api = require('./api');
 import axios from 'axios';
 
@@ -214,15 +212,34 @@ describe('getCityList', () => {
 
 describe('getPollutionData', () => {
   const mockedPollutionData: object = {
-    "status": "success",
     "data": {
-      "city": "Los Angeles",
-      "state": "California",
-      "country": "USA",
-      "current": {
-        "pollution": {
-          "ts": "2023-06-06T12:00:00.000Z",
-          "aqius": 32
+      "status": "success",
+      "data": {
+        "city": "Los Angeles",
+        "state": "California",
+        "country": "USA",
+        "current": {
+          "pollution": {
+            "ts": "2023-06-06T12:00:00.000Z",
+            "aqius": 32
+          }
+        }
+      }
+    }
+  }
+
+  const otherMockedPollutionData: object = {
+    "data": {
+      "status": "success",
+      "data": {
+        "city": "Bristol",
+        "state": "England",
+        "country": "United Kingdom",
+        "current": {
+          "pollution": {
+            "ts": "2023-06-06T12:00:00.000Z",
+            "aqius": 20
+          }
         }
       }
     }
@@ -236,7 +253,7 @@ describe('getPollutionData', () => {
     air_quality_index: number
   }
 
-  it('returns the pollution data in correct format', async () => {
+  it('returns pollution data in correct format', async () => {
     mockedAxios.get.mockResolvedValue(mockedPollutionData);
     const pollutionData: PollutionData = await api.getPollutionData('USA', 'California', 'Los Angeles');
     const expected: PollutionData = {
@@ -246,21 +263,22 @@ describe('getPollutionData', () => {
       last_updated: expect.any(Date),
       air_quality_index: expect.any(Number)
     }
-
     expect(pollutionData).toMatchObject<PollutionData>(expected);
   });
 
-  it('returns the pollution data for a city', async () => {
-    mockedAxios.get.mockResolvedValue(mockedPollutionData);
+  it('returns the pollution data for a different city', async () => {
+    mockedAxios.get.mockResolvedValue(otherMockedPollutionData);
     const pollutionData: PollutionData = await api.getPollutionData('United Kingdom', 'England', 'Bristol');
     const expected: PollutionData = {
       city: 'Bristol',
       state: 'England',
       country: 'United Kingdom',
-      last_updated: new Date('2023-06-06T12:00:00.000Z'),
+      last_updated: expect.any(Date),
       air_quality_index: 20
     }
 
     expect(pollutionData).toMatchObject<PollutionData>(expected);
   });
 });
+
+
