@@ -206,7 +206,7 @@ describe('getCityList', () => {
 
   it('throws error on other API error', async () => {
     mockedAxios.get.mockRejectedValue(mockUkCityDataError);
-    await expect(api.getStateList('China')).rejects.toThrow('incorrect_api_key')
+    await expect(api.getCityList('United Kingdom', 'England')).rejects.toThrow('incorrect_api_key')
   });
 });
 
@@ -311,5 +311,3 @@ describe('getPollutionData', () => {
     await expect(api.getPollutionData('United Kingdom', 'England', 'Oxford')).rejects.toThrow('incorrect_api_key');
   });
 });
-
-
