@@ -68,7 +68,7 @@ export async function getPollutionData(country: string, state: string, city: str
     } catch (error: any) {
         if (error.response.data.status === 'fail') {
             if (error.response.data.data.message === 'country_not_found') {
-                return Promise.reject(new Error(`AirVisual API: country/state not found "${country}"/"${state}"`));
+                return Promise.reject(new Error(`AirVisual API: country/state/city not found "${country}"/"${state}"/"${city}"`));
             } else {
                 return Promise.reject(new Error(`Error status from AirVisual API: ${error.response.data.data.message}`));
             }
