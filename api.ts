@@ -86,3 +86,5 @@ export async function getPollutionData(country: string, state: string, city: str
 // getStateList('imagination land').then((data) => console.log(data)).catch((e) => console.log(e));
 // getCityList('United Kingdom', 'England').then((data) => console.log(data)).catch((e) => console.log(e));
 // getCityList('Albania', 'Berat').then((data) => console.log(data)).catch((e) => console.log(e));
+// getPollutionData('United Kingdom', 'England', 'Oxford').then((data) => console.log(data)).catch((e) => console.log(e));
+// getPollutionData('United Kingdom', 'England', 'Bristol').then((data) => console.log(data)).catch((e) => console.log(e));
