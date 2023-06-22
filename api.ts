@@ -3,14 +3,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-type PollutionData = {
-    city: string,
-    state: string,
-    country: string,
-    last_updated: Date,
-    air_quality_index: number
-}
-
 export async function getCountryList() : Promise<any> {
     try {
         const response = await axios.get(`https://api.airvisual.com/v2/countries?key=${process.env.AIRVISUAL_API_KEY}`);
@@ -54,15 +46,37 @@ export async function getCityList(country: string, state: string): Promise<any> 
     }
 }
 
-export async function getPollutionData(): Promise<PollutionData> {
-    return {
-        city: 'Los Angeles',
-        state: 'California',
-        country: 'USA',
-        last_updated: new Date(),
-        air_quality_index: 10
+export async function getPollutionData(country: string, state: string, city: string): Promise<any> {
+    type PollutionData = {
+        city: string,
+        state: string,
+        country: string,
+        last_updated: Date,
+        air_quality_index: number
+    }
+
+    try {
+        const response = await axios.get(`http://api.airvisual.com/v2/city?city=${city}&state=${state}&country=${country}&key=${process.env.AIRVISUAL_API_KEY}`);
+        const output: PollutionData = {
+            city: response.data.data.city,
+            state: response.data.data.state,
+            country: response.data.data.country,
+            last_updated: new Date(response.data.data.current.pollution.ts),
+            air_quality_index: response.data.data.current.pollution.aqius
+        };
+        return Promise.resolve(output);
+    } catch (error: any) {
+        if (error.response.data.status === 'fail') {
+            if (error.response.data.data.message === 'country_not_found') {
+                return Promise.reject(new Error(`AirVisual API: country/state not found "${country}"/"${state}"`));
+            } else {
+                return Promise.reject(new Error(`Error status from AirVisual API: ${error.response.data.data.message}`));
+            }
+        }
     }
 }
+
+
 
 // Live API tests
 // getCountryList().then((data) => console.log(data)).catch(e => console.log(e))
@@ -71,3 +85,4 @@ export async function getPollutionData(): Promise<PollutionData> {
 // getStateList('').then((data) => console.log(data)).catch((e) => console.log(e));
 // getStateList('imagination land').then((data) => console.log(data)).catch((e) => console.log(e));
 // getCityList('United Kingdom', 'England').then((data) => console.log(data)).catch((e) => console.log(e));
+// getCityList('Albania', 'Berat').then((data) => console.log(data)).catch((e) => console.log(e));
