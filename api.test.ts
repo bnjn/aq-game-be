@@ -245,6 +245,28 @@ describe('getPollutionData', () => {
     }
   }
 
+  const mockPollutionDataNotFound : object = {
+    "response": {
+      "data": {
+        "status": "fail",
+        "data": {
+          "message": "country_not_found"
+        }
+      }
+    }
+  }
+
+  const mockPollutionDataError : object = {
+    "response": {
+      "data": {
+        "status": "fail",
+        "data": {
+          "message": "incorrect_api_key"
+        }
+      }
+    }
+  }
+
   type PollutionData = {
     city: string,
     state: string,
@@ -276,8 +298,17 @@ describe('getPollutionData', () => {
       last_updated: expect.any(Date),
       air_quality_index: 20
     }
-
     expect(pollutionData).toMatchObject<PollutionData>(expected);
+  });
+
+  it('throws error when input country, state or city not found', async () => {
+    mockedAxios.get.mockRejectedValue(mockPollutionDataNotFound);
+    await expect(api.getPollutionData('Imagination Land', 'Nowhere', 'None')).rejects.toThrow('country/state/city not found "Imagination Land"/"Nowhere"/"None"');
+  });
+
+  it('throws error on other API error', async () => {
+    mockedAxios.get.mockRejectedValue(mockPollutionDataError);
+    await expect(api.getPollutionData('United Kingdom', 'England', 'Oxford')).rejects.toThrow('incorrect_api_key');
   });
 });
 
