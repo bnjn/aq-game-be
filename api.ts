@@ -51,8 +51,8 @@ export async function getPollutionData(country: string, state: string, city: str
         city: string,
         state: string,
         country: string,
-        last_updated: Date,
-        air_quality_index: number
+        lastUpdated: Date,
+        airQualityIndex: number
     }
 
     try {
@@ -61,8 +61,8 @@ export async function getPollutionData(country: string, state: string, city: str
             city: response.data.data.city,
             state: response.data.data.state,
             country: response.data.data.country,
-            last_updated: new Date(response.data.data.current.pollution.ts),
-            air_quality_index: response.data.data.current.pollution.aqius
+            lastUpdated: new Date(response.data.data.current.pollution.ts),
+            airQualityIndex: response.data.data.current.pollution.aqius
         };
         return Promise.resolve(output);
     } catch (error: any) {

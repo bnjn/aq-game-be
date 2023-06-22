@@ -271,8 +271,8 @@ describe('getPollutionData', () => {
     city: string,
     state: string,
     country: string,
-    last_updated: Date,
-    air_quality_index: number
+    lastUpdated: Date,
+    airQualityIndex: number
   }
 
   it('returns pollution data in correct format', async () => {
@@ -282,8 +282,8 @@ describe('getPollutionData', () => {
       city: expect.any(String),
       state: expect.any(String),
       country: expect.any(String),
-      last_updated: expect.any(Date),
-      air_quality_index: expect.any(Number)
+      lastUpdated: expect.any(Date),
+      airQualityIndex: expect.any(Number)
     }
     expect(pollutionData).toMatchObject<PollutionData>(expected);
   });
@@ -295,8 +295,8 @@ describe('getPollutionData', () => {
       city: 'Bristol',
       state: 'England',
       country: 'United Kingdom',
-      last_updated: expect.any(Date),
-      air_quality_index: 20
+      lastUpdated: expect.any(Date),
+      airQualityIndex: 20
     }
     expect(pollutionData).toMatchObject<PollutionData>(expected);
   });
