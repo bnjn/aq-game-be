@@ -2,6 +2,8 @@ import fs from "fs";
 import {getCityList, getCountryList, getStateList} from "./api";
 const qrate = require('qrate');
 
+// Functions to save data from the api functions to json files.
+
 export async function saveCountryData(): Promise<void> {
     getCountryList().then((data) => {
         console.log(data)

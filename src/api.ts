@@ -3,6 +3,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// Functions to call the IQAir API
+
+// Returns a promise that resolves to an array of supported countries as strings.
 export async function getCountryList() : Promise<any> {
     try {
         const response = await axios.get(`https://api.airvisual.com/v2/countries?key=${process.env.AIRVISUAL_API_KEY}`);
@@ -14,7 +17,7 @@ export async function getCountryList() : Promise<any> {
     }
 }
 
-
+// Returns a promise that resolves to an array of supported states as strings when given a country.
 export async function getStateList(country: string) : Promise<any> {
     try {
         const response = await axios.get(`https://api.airvisual.com/v2/states?country=${country}&key=${process.env.AIRVISUAL_API_KEY}`);
@@ -30,6 +33,7 @@ export async function getStateList(country: string) : Promise<any> {
     }
 }
 
+// Returns a promise that resolves to an array of supported cities as strings when given a country and state.
 export async function getCityList(country: string, state: string): Promise<any> {
     // AQ api responds with state_not_found if either the state or country are not found. Need to inform with a thrown error. Maybe validate against local data before making the call to the city endpoint?
     try {
@@ -46,6 +50,7 @@ export async function getCityList(country: string, state: string): Promise<any> 
     }
 }
 
+// Returns a promise that resolves to an object containing pollution data when given a country, state and city.
 export async function getPollutionData(country: string, state: string, city: string): Promise<any> {
     type PollutionData = {
         city: string,
@@ -75,8 +80,6 @@ export async function getPollutionData(country: string, state: string, city: str
         }
     }
 }
-
-
 
 // Live API tests
 // getCountryList().then((data) => console.log(data)).catch(e => console.log(e))
