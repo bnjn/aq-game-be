@@ -23,4 +23,10 @@ describe('GET /states', () => {
       const response = await request(app).get('/states');
       expect(Array.isArray(response.body.states)).toEqual(true);
     });
+
+    it('responds with at least one state as a string', async (): Promise<void> => {
+        const response = await request(app).get('/states');
+        expect(response.body.states.length).toBeGreaterThan(0);
+        expect(typeof response.body.states[0]).toEqual('string')
+    });
 });
