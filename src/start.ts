@@ -1,2 +1,6 @@
 import app from './server';
-app.listen(3000);
+import dotenv from 'dotenv';
+
+dotenv.config()
+app.listen(process.env.PORT);
+console.log(`Air Quality API started on port ${process.env.PORT}`)

@@ -5,6 +5,7 @@
 - Create `.env` file in base directory.
 - Get API key from https://www.iqair.com/dashboard/api
 - Add `AIRVISUAL_API_KEY="yourapikey"` to `.env`.
+- Add `PORT=3000` to `.env`
 
 ### Usage
 - Run `npm start`.
