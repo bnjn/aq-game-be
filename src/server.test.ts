@@ -14,8 +14,13 @@ describe('GET /', () => {
 });
 
 describe('GET /states', () => {
-   it('responds with JSON', async () : Promise<void> => {
+    it('responds with JSON', async () : Promise<void> => {
        const response = await request(app).get('/states').set('Accept', 'application/json');
        expect(response.headers["content-type"]).toMatch(/json/);
-   });
+    });
+
+    it('responds with a states property containing an array', async (): Promise<void> => {
+      const response = await request(app).get('/states');
+      expect(Array.isArray(response.body.states)).toEqual(true);
+    });
 });

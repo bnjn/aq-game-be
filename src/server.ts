@@ -6,6 +6,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/states', (req, res) => {
-   res.type('json').send({}).end()
+   res.type('json').send({
+      states: []
+   }).end()
 })
 export default app;
