@@ -30,3 +30,27 @@ describe('GET /states', () => {
         expect(typeof response.body.states[0]).toEqual('string')
     });
 });
+
+describe('GET /cities',() => {
+    it('responds with JSON', async () : Promise<void> => {
+        const response = await request(app).get('/cities').set('Accept', 'application/json');
+        expect(response.headers["content-type"]).toMatch(/json/);
+    });
+
+    it('responds with "Please send a POST with country=countryname and state=statename to /cities for a list of cities." in the response body',async () : Promise<void> => {
+        const response = await request(app).get('/cities');
+        expect(response.body.message).toMatch(/Please send a POST with the body: \{ country: 'countryname', state: 'statename' } to \/cities for a list of cities\./i);
+    });
+})
+
+describe('POST /cities',() => {
+    it('responds with JSON', async () : Promise<void> => {
+        const response = await request(app).post('/cities').set('Accept', 'application/json');
+        expect(response.headers["content-type"]).toMatch(/json/);
+    });
+
+    it('returns London when given a POST body containing United Kingdom and England', async (): Promise<void> => {
+        const response = await request(app).post('/cities').send({ country: 'United Kingdom', state: 'London' });
+        expect(response.body.cities).toContain('London');
+    });
+})
