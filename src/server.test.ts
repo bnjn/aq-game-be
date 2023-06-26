@@ -80,3 +80,37 @@ describe('POST /cities',() => {
     });
 
 })
+
+describe('GET /pollution_data',() => {
+    it('responds with JSON', async () : Promise<void> => {
+        const response = await request(app).get('/pollution_data').set('Accept', 'application/json');
+        expect(response.headers["content-type"]).toMatch(/json/);
+    });
+   
+    it('responds with "Please send a POST with country=countryname and state=statename to /cities for a list of cities." in the response body',async () : Promise<void> => {
+        const response = await request(app).get('/pollution_data');
+        expect(response.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data.");
+    });
+})
+
+describe('POST /pollution_data',() => {
+    it('responds with JSON', async () : Promise<void> => {
+        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' });
+        expect(response.headers["content-type"]).toMatch(/json/);
+    });
+
+    it('returns "Please send a POST with the body: { country: \'countryname\', state: \'statename\', city: \'cityName\' } to /pollution_data to get a cities pollution_data" when missing element in json.', async () : Promise<void> => {
+        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', city: 'Bristol' });
+        expect(response.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+    });
+
+    it('returns "Please send a POST with the body: { country: \'countryname\', state: \'statename\', city: \'cityName\' } to /pollution_data to get a cities pollution_data" when missing element in json.', async () : Promise<void> => {
+        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', city: 'Bristol' });
+        expect(response.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+    });
+
+    it('returns "No data found for chosen city" if invalid city is entered', async () : Promise<void> => {
+        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Britol' });
+        expect(response.body.message).toMatch("No data found for chosen city");
+    });
+})

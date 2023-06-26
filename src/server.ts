@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from "fs";
 import bodyParser from "body-parser";
+import { getPollutionData } from "../../../aq-game-be/src/api"
 const app = express();
 
 const jsonParser = bodyParser.json();
@@ -50,6 +51,37 @@ app.post('/cities', jsonParser, (req, res) => {
       }
    } else {
       res.type('json').send('internal server error').status(500).end();
+   }
+});
+
+app.get('/pollution_data', (req, res) => {
+   res.type('json').send(
+       {
+          message: "Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data." 
+       }
+   ).end();
+});
+
+app.post('/pollution_data', jsonParser, (req, res) => {
+   const [country, state, city ] = [req.body.country, req.body.state, req.body.city]
+   const isNotEmpty = country && state && city
+   if (isNotEmpty) {
+      getPollutionData(country, state, city).then(data => {
+         res.type('json').send(data).end();
+   
+      }).catch(err => {
+         res.type('json').send(
+         {
+            message: "No data found for chosen city"         
+         }
+         ).end();
+      })
+   } else {
+      res.type('json').send(
+         {
+            message: "Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data." 
+         }
+     ).end();
    }
 });
 
