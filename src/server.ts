@@ -1,6 +1,9 @@
 import express from 'express';
 import fs from "fs";
+import bodyParser from "body-parser";
 const app = express();
+
+const jsonParser = bodyParser.json();
 
 app.get('/', (req, res) => {
    res.send({message: 'Working!'}).status(200).end();
@@ -25,8 +28,29 @@ app.get('/cities', (req, res) => {
    ).end();
 });
 
-app.post('/cities', (req, res) => {
-   res.type('json').send({cities: ['London']}).end();
+app.post('/cities', jsonParser, (req, res) => {
+   if (fs.existsSync('./data/cityData.json')) {
+      let cities: string[] = [];
+
+      JSON.parse(fs.readFileSync('./data/cityData.json', 'utf8')).forEach((state: any) => {
+         const stateFound = state.state === req.body.state;
+         const countryFound = state.country === req.body.country;
+         if (stateFound && countryFound) {
+            cities.push(...state.cities);
+         }
+      });
+      if (cities.length === 0) {
+         res.type('json').send(
+             {
+                message: "Country and/or state not found"
+             }
+         ).end();
+      } else {
+         res.type('json').send({cities: cities}).end();
+      }
+   } else {
+      res.type('json').send('internal server error').status(500).end();
+   }
 });
 
 export default app;
