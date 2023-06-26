@@ -17,4 +17,16 @@ app.get('/states', (req, res) => {
    }
 });
 
+app.get('/cities', (req, res) => {
+   res.type('json').send(
+       {
+          message: "Please send a POST with the body: { country: 'countryname', state: 'statename' } to /cities for a list of cities."
+       }
+   ).end();
+});
+
+app.post('/cities', (req, res) => {
+   res.type('json').send({cities: ['London']}).end();
+});
+
 export default app;
