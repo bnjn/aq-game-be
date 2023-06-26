@@ -50,7 +50,33 @@ describe('POST /cities',() => {
     });
 
     it('returns London when given a POST body containing United Kingdom and England', async (): Promise<void> => {
-        const response = await request(app).post('/cities').send({ country: 'United Kingdom', state: 'London' });
+        const response = await request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' });
         expect(response.body.cities).toContain('London');
     });
+
+    it('returns Bristol when given a POST body containing United Kingdom and England', async (): Promise<void> => {
+        const response = await request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' });
+        expect(response.body.cities).toContain('Bristol');
+    });
+
+    it('returns a body with a message key containing "Country and/or state not found" when given a POST body containing invalid state', async (): Promise<void> => {
+        const response = await request(app).post('/cities').send({ country: 'United Kingdom', state: 'Engld' });
+        expect(response.body.message).toMatch(/Country and\/or state not found/);
+    });
+
+    it('returns a body with a message key containing "Country and/or state not found" when given a POST body containing invalid country', async (): Promise<void> => {
+        const response = await request(app).post('/cities').send({ country: 'ited Kom', state: 'England' });
+        expect(response.body.message).toMatch(/Country and\/or state not found/);
+    });
+
+    it('returns a body with a message key containing "Country and/or state not found" when given a POST body containing invalid country and state', async (): Promise<void> => {
+        const response = await request(app).post('/cities').send({ country: 'ited Kom', state: 'Eland' });
+        expect(response.body.message).toMatch(/Country and\/or state not found/);
+    });
+
+    it('returns Cardiff when given a POST body containing United Kingdom and Wales', async (): Promise<void> => {
+        const response = await request(app).post('/cities').send({ country: 'United Kingdom', state: 'Wales' });
+        expect(response.body.cities).toContain('Cardiff');
+    });
+
 })
