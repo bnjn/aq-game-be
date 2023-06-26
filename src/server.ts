@@ -1,7 +1,7 @@
 import express from 'express';
 import fs from "fs";
 import bodyParser from "body-parser";
-import { getPollutionData } from "../../../aq-game-be/src/api"
+import { getPollutionData } from "./api"
 const app = express();
 
 const jsonParser = bodyParser.json();
@@ -66,10 +66,10 @@ app.post('/pollution_data', jsonParser, (req, res) => {
    const [country, state, city ] = [req.body.country, req.body.state, req.body.city]
    const isNotEmpty = country && state && city
    if (isNotEmpty) {
-      getPollutionData(country, state, city).then(data => {
+      getPollutionData(country, state, city).then((data: any) => {
          res.type('json').send(data).end();
    
-      }).catch(err => {
+      }).catch((err: any) => {
          res.type('json').send(
          {
             message: "No data found for chosen city"         
