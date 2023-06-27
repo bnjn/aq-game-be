@@ -1,24 +1,30 @@
 import express from 'express';
+import dotenv from "dotenv";
 import fs from "fs";
 import bodyParser from "body-parser";
 import { getPollutionData } from "./api"
-const app = express();
+import {saveStateData} from "./scrape";
 
+dotenv.config();
+const app = express();
 const jsonParser = bodyParser.json();
 
 app.get('/', (req, res) => {
    res.send({message: 'Working!'}).status(200).end();
 });
 
-app.get('/states', (req, res) => {
-   if (fs.existsSync('./data/cityData.json')) {
-      const states = JSON.parse(fs.readFileSync('./data/cityData.json', 'utf8')).map((state: any) => state.state)
-      res.type('json').send({
-         states: states
-      }).end()
-   } else {
-      res.type('json').send('internal server error').status(500).end();
-   }
+app.get('/states', async (req, res) => {
+      if (fs.existsSync('./data/states.json')) {
+         res.type('json').send({
+            states: stateJsonToArray('./data/states.json')
+         }).end()
+      } else {
+            console.log('data/states.json not found');
+            res.type('json').send('internal server error. please try again in a moment.').status(500).end();
+            saveStateData([process.env.COUNTRY ?? 'United Kingdom']).then(() => {
+            console.log(`State data written to data/states.json`);
+            }).catch((err) => { console.log(err)});
+      }
 });
 
 app.get('/cities', (req, res) => {
@@ -84,5 +90,13 @@ app.post('/pollution_data', jsonParser, (req, res) => {
      ).end();
    }
 });
+
+function stateJsonToArray(path: string) {
+      let states: string[] = [];
+      JSON.parse(fs.readFileSync(path, 'utf8')).forEach((country: any) => {
+         country.states.forEach((state: string) => states.push(state));
+      });
+      return states;
+}
 
 export default app;
