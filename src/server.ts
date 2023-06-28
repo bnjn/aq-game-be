@@ -32,14 +32,14 @@ app.get('/cities', (req, res) => {
 });
 
 app.post('/cities', jsonParser, (req, res) => {
-   if (fs.existsSync('./data/cityData.json')) {
+   if (fs.existsSync('./data/cities.json')) {
       let cities: string[] = [];
 
-      JSON.parse(fs.readFileSync('./data/cityData.json', 'utf8')).forEach((state: any) => {
-         const stateFound = state.state === req.body.state;
-         const countryFound = state.country === req.body.country;
+      JSON.parse(fs.readFileSync('./data/cities.json', 'utf8')).forEach((city: any) => {
+         const stateFound = city.state === req.body.state;
+         const countryFound = city.country === req.body.country;
          if (stateFound && countryFound) {
-            cities.push(...state.cities);
+            cities.push(city.city);
          }
       });
       if (cities.length === 0) {
