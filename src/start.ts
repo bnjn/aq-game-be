@@ -37,7 +37,7 @@ function start() {
         // all of the queue items have been processed
         console.log(`Data written to data/cities.json`);
         app.listen(port);
-        console.log(`Air Quality API started on port ${process.env.PORT}`)
+        console.log(`Air Quality API started on port ${process.env.PORT}`);
     }
 }
 

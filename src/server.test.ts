@@ -11,6 +11,22 @@ describe('GET /', () => {
        const response = await request(app).get('/');
        expect(response.body.message).toMatch(/working!/i);
     });
+
+    it('should respond with 429 status when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+           await request(app).get('/');
+        }
+        const response = await request(app).get('/');
+        expect(response.statusCode).toBe(429);
+    });
+
+    it('should respond with an error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+            await request(app).get('/');
+        }
+        const response = await request(app).get('/');
+        expect(response.body.message).toMatch(/Too many requests/i);
+    });
 });
 
 describe('GET /states', () => {
