@@ -45,6 +45,22 @@ describe('GET /states', () => {
         expect(response.body.states.length).toBeGreaterThan(0);
         expect(typeof response.body.states[0]).toEqual('string')
     });
+
+    it('should respond with 429 status when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+            await request(app).get('/states');
+        }
+        const response = await request(app).get('/states');
+        expect(response.statusCode).toBe(429);
+    });
+
+    it('should respond with an error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+            await request(app).get('/states');
+        }
+        const response = await request(app).get('/states');
+        expect(response.error.text).toMatch(/Too many requests/i);
+    });
 });
 
 describe('GET /cities',() => {
@@ -56,6 +72,22 @@ describe('GET /cities',() => {
     it('responds with "Please send a POST with country=countryname and state=statename to /cities for a list of cities." in the response body',async () : Promise<void> => {
         const response = await request(app).get('/cities');
         expect(response.body.message).toMatch(/Please send a POST with the body: \{ country: 'countryname', state: 'statename' } to \/cities for a list of cities\./i);
+    });
+
+    it('should respond with 429 status when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+            await request(app).get('/cities');
+        }
+        const response = await request(app).get('/cities');
+        expect(response.statusCode).toBe(429);
+    });
+
+    it('should respond with an error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+            await request(app).get('/cities');
+        }
+        const response = await request(app).get('/cities');
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 })
 
@@ -95,6 +127,21 @@ describe('POST /cities',() => {
         expect(response.body.cities).toContain('Cardiff');
     });
 
+    it('should respond with 429 status when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+            await request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' });;
+        }
+        const response = await request(app).post('/cities');
+        expect(response.statusCode).toBe(429);
+    });
+
+    it('should respond with an error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        for (const i of [...Array(10)]) {
+            await request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' });;
+        }
+        const response = await request(app).post('/cities');
+        expect(response.error.text).toMatch(/Too many requests/i);
+    });
 })
 
 describe('GET /pollution_data',() => {
