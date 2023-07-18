@@ -57,7 +57,7 @@ app.post('/cities', defaultLimiter, jsonParser, (req, res) => {
    }
 });
 
-app.get('/pollution_data', (req, res) => {
+app.get('/pollution_data', defaultLimiter, (req, res) => {
    res.type('json').send(
        {
           message: "Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data." 
@@ -65,7 +65,7 @@ app.get('/pollution_data', (req, res) => {
    ).end();
 });
 
-app.post('/pollution_data', jsonParser, (req, res) => {
+app.post('/pollution_data', defaultLimiter, liveDataLimiter, jsonParser, (req, res) => {
    const [country, state, city ] = [req.body.country, req.body.state, req.body.city]
    const isNotEmpty = country && state && city
    if (isNotEmpty) {

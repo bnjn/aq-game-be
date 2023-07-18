@@ -7,8 +7,8 @@ const defaultLimiter = rateLimit({
 });
 
 const liveDataLimiter = rateLimit({
-    windowMs: 1000,
-    max: 1,
+    windowMs: 60000,
+    max: 2,
     message: 'Too many requests!'
 });
 
