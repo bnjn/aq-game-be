@@ -22,6 +22,6 @@
 - Use Reddis instead of `.json` files
 - Cache pollution data to DB and retrieve from there if AQ API unavailable or data is less than 24hrs old.
 - Front end (React)
-~~- Rate limits~~
+- ~~Rate limits~~
 - CI/CD
 - Deploy to AWS free tier
