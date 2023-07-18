@@ -367,7 +367,7 @@ describe('POST /pollution_data',() => {
         });
     });
 
-    it('should respond with 429 status and error message when more than 1 requests are sent per second', (done) : void => {
+    it('should respond with 429 status and error message when more than 2 requests are sent per minute', (done) : void => {
         for (const i of [...Array(2)]) {
             request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).end(() => done());
         }
