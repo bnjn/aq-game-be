@@ -259,11 +259,11 @@ describe('POST /cities',() => {
 
 describe('GET /pollution_data',() => {
     beforeAll( (done) => {
-        setTimeout(() => done(), 1000);
+        setTimeout(() => done(), 2000);
     });
 
     afterEach( (done) => {
-        setTimeout(() => done(), 500);
+        setTimeout(() => done(), 1000);
     });
 
     it('responds with 200 status code', (done) : void => {
@@ -311,11 +311,11 @@ describe('GET /pollution_data',() => {
 
 describe('POST /pollution_data',() => {
     beforeAll( (done) => {
-        setTimeout(() => done(), 1000);
+        setTimeout(() => done(), 2000);
     });
 
     afterEach( (done) => {
-        setTimeout(() => done(), 500);
+        setTimeout(() => done(), 1000);
     });
 
     it('responds with 200 status code', (done) : void => {
@@ -367,7 +367,7 @@ describe('POST /pollution_data',() => {
         });
     });
 
-    xit('should respond with 429 status and error message when more than 1 requests are sent per second', (done) : void => {
+    it('should respond with 429 status and error message when more than 1 requests are sent per second', (done) : void => {
         for (const i of [...Array(2)]) {
             request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).end(() => done());
         }
