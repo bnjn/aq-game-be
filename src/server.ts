@@ -13,7 +13,7 @@ app.get('/', defaultLimiter, (req, res) => {
    res.send({message: 'Working!'}).status(200).end();
 });
 
-app.get('/states', async (req, res) => {
+app.get('/states', defaultLimiter, async (req, res) => {
       if (fs.existsSync('./data/cities.json')) {
          res.type('json').send({
             states: jsonToStateArray('./data/cities.json')
@@ -24,7 +24,7 @@ app.get('/states', async (req, res) => {
       }
 });
 
-app.get('/cities', (req, res) => {
+app.get('/cities', defaultLimiter, (req, res) => {
    res.type('json').send(
        {
           message: "Please send a POST with the body: { country: 'countryname', state: 'statename' } to /cities for a list of cities."
@@ -32,7 +32,7 @@ app.get('/cities', (req, res) => {
    ).end();
 });
 
-app.post('/cities', jsonParser, (req, res) => {
+app.post('/cities', defaultLimiter, jsonParser, (req, res) => {
    if (fs.existsSync('./data/cities.json')) {
       let cities: string[] = [];
 
