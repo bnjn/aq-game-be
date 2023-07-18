@@ -4,5 +4,6 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: [
     "**/__tests__/**/*.ts?(x)", "**/?(*.)+(spec|test).ts?(x)"
-  ]
+  ],
+  slowTestThreshold: 120
 };
