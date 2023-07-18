@@ -3,12 +3,13 @@ import dotenv from "dotenv";
 import fs from "fs";
 import bodyParser from "body-parser";
 import { getPollutionData } from "./api"
+import {defaultLimiter, liveDataLimiter} from "./middleware/rateLimiter";
 
 dotenv.config();
 const app = express();
 const jsonParser = bodyParser.json();
 
-app.get('/', (req, res) => {
+app.get('/', defaultLimiter, (req, res) => {
    res.send({message: 'Working!'}).status(200).end();
 });
 

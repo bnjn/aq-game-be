@@ -25,7 +25,7 @@ describe('GET /', () => {
             await request(app).get('/');
         }
         const response = await request(app).get('/');
-        expect(response.body.message).toMatch(/Too many requests/i);
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 });
 
