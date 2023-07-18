@@ -258,38 +258,125 @@ describe('POST /cities',() => {
 })
 
 describe('GET /pollution_data',() => {
-    it('responds with JSON', async () : Promise<void> => {
-        const response = await request(app).get('/pollution_data').set('Accept', 'application/json');
-        expect(response.headers["content-type"]).toMatch(/json/);
+    beforeAll( (done) => {
+        setTimeout(() => done(), 1000);
     });
-    it('responds with "Please send a POST with country=countryname and state=statename to /cities for a list of cities." in the response body',async () : Promise<void> => {
-        const response = await request(app).get('/pollution_data');
-        expect(response.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data.");
+
+    afterEach( (done) => {
+        setTimeout(() => done(), 500);
+    });
+
+    it('responds with 200 status code', (done) : void => {
+        request(app).get('/pollution_data').expect(200).end((err: Error) => {
+            if (err) {
+                return done(err);
+            }
+            return done();
+        });
+    });
+
+    it('responds with JSON', (done) : void => {
+        request(app).get('/pollution_data').set('Accept', 'application/json').end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.headers["content-type"]).toMatch(/json/);
+            return done();
+        });
+    });
+
+    it('responds with "Please send a POST with the body: { country: \'countryname\', state: \'statename\', city: \'cityName\' } to /pollution_data to get a cities pollution_data." in the response body',(done) : void => {
+        request(app).get('/pollution_data').end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data.");
+            return done();
+        });
+    });
+
+    it('should respond with 429 status and error message when more than 1 requests are sent per second', (done) : void => {
+        for (const i of [...Array(2)]) {
+            request(app).get('/pollution_data').end(() => done());
+        }
+        request(app).get('/pollution_data').expect(429).end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.error.text).toMatch(/Too many requests/i);
+            return done();
+        });
     });
 })
 
 describe('POST /pollution_data',() => {
-    beforeAll((done) => {
-        setTimeout(() => done(), 1000)
+    beforeAll( (done) => {
+        setTimeout(() => done(), 1000);
     });
 
-    it('responds with JSON', async () : Promise<void> => {
-        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' });
-        expect(response.headers["content-type"]).toMatch(/json/);
+    afterEach( (done) => {
+        setTimeout(() => done(), 500);
     });
 
-    it('returns "Please send a POST with the body: { country: \'countryname\', state: \'statename\', city: \'cityName\' } to /pollution_data to get a cities pollution_data" when missing element in json.', async () : Promise<void> => {
-        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', city: 'Bristol' });
-        expect(response.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+    it('responds with 200 status code', (done) : void => {
+        request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).expect(200).end((err: Error) => {
+            if (err) {
+                return done(err);
+            }
+            return done();
+        });
     });
 
-    it('returns "Please send a POST with the body: { country: \'countryname\', state: \'statename\', city: \'cityName\' } to /pollution_data to get a cities pollution_data" when missing element in json.', async () : Promise<void> => {
-        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', city: 'Bristol' });
-        expect(response.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+    it('responds with JSON', (done) : void => {
+        request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).set('Accept', 'application/json').end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.headers["content-type"]).toMatch(/json/);
+            return done();
+        });
     });
 
-    it('returns "No data found for chosen city" if invalid city is entered', async () : Promise<void> => {
-        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Britol' });
-        expect(response.body.message).toMatch("No data found for chosen city");
+    it('returns "Please send a POST with the body: { country: \'countryname\', state: \'statename\', city: \'cityName\' } to /pollution_data to get a cities pollution_data" when missing state in json.', (done) : void => {
+        request(app).post('/pollution_data').send({ country: 'United Kingdom', city: 'Bristol' }).end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+            return done();
+        });
+    });
+
+    it('returns "Please send a POST with the body: { country: \'countryname\', state: \'statename\', city: \'cityName\' } to /pollution_data to get a cities pollution_data" when missing city in json.', (done) : void => {
+        request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England' }).end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+            return done();
+        });
+    });
+
+    it('returns "No data found for chosen city" if invalid city is entered', (done) : void => {
+        request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Britol' }).end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.body.message).toMatch("No data found for chosen city");
+            return done();
+        });
+    });
+
+    xit('should respond with 429 status and error message when more than 1 requests are sent per second', (done) : void => {
+        for (const i of [...Array(2)]) {
+            request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).end(() => done());
+        }
+        request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).end((err: Error, res: any) => {
+            if (err) {
+                return done(err);
+            }
+            expect(res.error.text).toMatch(/Too many requests/i);
+            return done();
+        });
     });
 })
