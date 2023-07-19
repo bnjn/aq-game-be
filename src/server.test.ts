@@ -1,10 +1,20 @@
 const request = require('supertest');
+const sinon = require('sinon');
+const rateLimter = require('./middleware/rateLimiter');
+const api = require('./api');
+
+const originalLiveDataLimiter = rateLimter.liveDataLimiter;
+const originalDefaultLimiter = rateLimter.defaultLimiter;
+const liveDataLimiterStub = sinon.stub(rateLimter, 'liveDataLimiter');
+const defaultLimiterStub = sinon.stub(rateLimter, 'defaultLimiter');
+
 import app from './server';
 
 describe('GET /', () => {
-    afterEach( (done) => {
-        setTimeout(() => done(), 500);
-    });
+    beforeAll(() => {
+        rateLimter.liveDataLimiter.callsFake((req: any, res: any, next: any) => next());
+        rateLimter.defaultLimiter.callsFake((req: any, res: any, next: any) => next());
+    })
 
     it('responds with a 200 status code',  (done) : void => {
         request(app).get('/').expect(200).end((err: Error) => {
@@ -26,28 +36,22 @@ describe('GET /', () => {
 
     });
 
-    it('should respond with 429 status and error message when more than 2 requests are sent per second', (done) : void => {
-            for (const i of [...Array(10)]) {
-                request(app).get('/').end(() => done());
-            }
-            request(app).get('/').expect(429).end((err: Error, res: any) => {
-                if (err) {
-                    return done(err);
-                }
-                expect(res.error.text).toMatch(/Too many requests/i);
-                return done();
-            });
+    it('should respond with 429 status and error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        rateLimter.liveDataLimiter.callsFake(originalLiveDataLimiter);
+        rateLimter.defaultLimiter.callsFake(originalDefaultLimiter);
+        for (const i of [...Array(10)]) {
+            await request(app).get('/');
+        }
+        const response = await request(app).get('/').expect(429)
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 });
 
 describe('GET /states', () => {
-    beforeAll( (done) => {
-        setTimeout(() => done(), 1000);
-    });
-
-    afterEach( (done) => {
-        setTimeout(() => done(), 500);
-    });
+    beforeAll(() => {
+        rateLimter.liveDataLimiter.callsFake((req: any, res: any, next: any) => next());
+        rateLimter.defaultLimiter.callsFake((req: any, res: any, next: any) => next());
+    })
 
     it('responds with 200 status code', (done) : void => {
         request(app).get('/states').expect(200).end((err: Error) => {
@@ -89,28 +93,22 @@ describe('GET /states', () => {
         });
     });
 
-    it('should respond with 429 status and error message when more than 2 requests are sent per second', (done) : void => {
+    it('should respond with 429 status and error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        rateLimter.liveDataLimiter.callsFake(originalLiveDataLimiter);
+        rateLimter.defaultLimiter.callsFake(originalDefaultLimiter);
         for (const i of [...Array(10)]) {
-            request(app).get('/states').end(() => done());
+            await request(app).get('/states');
         }
-        request(app).get('/states').expect(429).end((err: Error, res: any) => {
-            if (err) {
-                return done(err);
-            }
-            expect(res.error.text).toMatch(/Too many requests/i);
-            return done();
-        });
+        const response = await request(app).get('/states').expect(429)
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 });
 
 describe('GET /cities',() => {
-    beforeAll( (done) => {
-        setTimeout(() => done(), 1000);
-    });
-
-    afterEach( (done) => {
-        setTimeout(() => done(), 500);
-    });
+    beforeAll(() => {
+        rateLimter.liveDataLimiter.callsFake((req: any, res: any, next: any) => next());
+        rateLimter.defaultLimiter.callsFake((req: any, res: any, next: any) => next());
+    })
 
     it('responds with 200 status code', (done) : void => {
         request(app).get('/cities').expect(200).end((err: Error) => {
@@ -141,28 +139,22 @@ describe('GET /cities',() => {
         });
     });
 
-    it('should respond with 429 status and error message when more than 2 requests are sent per second', (done) : void => {
+    it('should respond with 429 status and error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        rateLimter.liveDataLimiter.callsFake(originalLiveDataLimiter);
+        rateLimter.defaultLimiter.callsFake(originalDefaultLimiter);
         for (const i of [...Array(10)]) {
-            request(app).get('/cities').end(() => done());
+            await request(app).get('/cities');
         }
-        request(app).get('/cities').expect(429).end((err: Error, res: any) => {
-            if (err) {
-                return done(err);
-            }
-            expect(res.error.text).toMatch(/Too many requests/i);
-            return done();
-        });
+        const response = await request(app).get('/cities').expect(429)
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 });
 
 describe('POST /cities',() => {
-    beforeAll( (done) => {
-        setTimeout(() => done(), 1000);
-    });
-
-    afterEach( (done) => {
-        setTimeout(() => done(), 500);
-    });
+    beforeAll(() => {
+        rateLimter.liveDataLimiter.callsFake((req: any, res: any, next: any) => next());
+        rateLimter.defaultLimiter.callsFake((req: any, res: any, next: any) => next());
+    })
 
     it('responds with 200 status code', (done) : void => {
         request(app).post('/cities').expect(200).end((err: Error) => {
@@ -243,28 +235,22 @@ describe('POST /cities',() => {
         });
     });
 
-    it('should respond with 429 status and error message when more than 2 requests are sent per second', (done) : void => {
+    it('should respond with 429 status and error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        rateLimter.liveDataLimiter.callsFake(originalLiveDataLimiter);
+        rateLimter.defaultLimiter.callsFake(originalDefaultLimiter);
         for (const i of [...Array(10)]) {
-            request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' }).end(() => done());
+            await request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' });
         }
-        request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' }).expect(429).end((err: Error, res: any) => {
-            if (err) {
-                return done(err);
-            }
-            expect(res.error.text).toMatch(/Too many requests/i);
-            return done();
-        });
+        const response = await request(app).post('/cities').send({ country: 'United Kingdom', state: 'England' }).expect(429);
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 })
 
 describe('GET /pollution_data',() => {
-    beforeAll( (done) => {
-        setTimeout(() => done(), 2000);
-    });
-
-    afterEach( (done) => {
-        setTimeout(() => done(), 1000);
-    });
+    beforeAll(() => {
+        rateLimter.liveDataLimiter.callsFake((req: any, res: any, next: any) => next());
+        rateLimter.defaultLimiter.callsFake((req: any, res: any, next: any) => next());
+    })
 
     it('responds with 200 status code', (done) : void => {
         request(app).get('/pollution_data').expect(200).end((err: Error) => {
@@ -295,28 +281,22 @@ describe('GET /pollution_data',() => {
         });
     });
 
-    it('should respond with 429 status and error message when more than 1 requests are sent per second', (done) : void => {
-        for (const i of [...Array(2)]) {
-            request(app).get('/pollution_data').end(() => done());
+    it('should respond with 429 status and error message when more than 2 requests are sent per second', async () : Promise<void> => {
+        rateLimter.liveDataLimiter.callsFake(originalLiveDataLimiter);
+        rateLimter.defaultLimiter.callsFake(originalDefaultLimiter);
+        for (const i of [...Array(10)]) {
+            await request(app).get('/pollution_data');
         }
-        request(app).get('/pollution_data').expect(429).end((err: Error, res: any) => {
-            if (err) {
-                return done(err);
-            }
-            expect(res.error.text).toMatch(/Too many requests/i);
-            return done();
-        });
+        const response = await request(app).get('/pollution_data').expect(429)
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 })
 
 describe('POST /pollution_data',() => {
-    beforeAll( (done) => {
-        setTimeout(() => done(), 2000);
-    });
-
-    afterEach( (done) => {
-        setTimeout(() => done(), 1000);
-    });
+    beforeAll(() => {
+        rateLimter.liveDataLimiter.callsFake((req: any, res: any, next: any) => next());
+        rateLimter.defaultLimiter.callsFake((req: any, res: any, next: any) => next());
+    })
 
     it('responds with 200 status code', (done) : void => {
         request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).expect(200).end((err: Error) => {
@@ -328,12 +308,36 @@ describe('POST /pollution_data',() => {
     });
 
     it('responds with JSON', (done) : void => {
+        const stub = sinon.stub(api, 'getPollutionData').resolves({
+            "data": {
+                "status": "success",
+                "data": {
+                    "city": "Bristol",
+                    "state": "England",
+                    "country": "United Kingdom",
+                    "current": {
+                        "pollution": {
+                            "ts": "2023-06-06T12:00:00.000Z",
+                            "aqius": 20
+                        }
+                    }
+                }
+            }
+        });
+
         request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).set('Accept', 'application/json').end((err: Error, res: any) => {
             if (err) {
+                stub.restore();
                 return done(err);
             }
-            expect(res.headers["content-type"]).toMatch(/json/);
-            return done();
+            try {
+                expect(res.headers["content-type"]).toMatch(/json/);
+                stub.restore();
+                done();
+            } catch(error) {
+                stub.restore();
+                done(error);
+            }
         });
     });
 
@@ -342,8 +346,12 @@ describe('POST /pollution_data',() => {
             if (err) {
                 return done(err);
             }
-            expect(res.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
-            return done();
+            try {
+                expect(res.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+                done();
+            } catch(error) {
+                done(error);
+            }
         });
     });
 
@@ -352,31 +360,58 @@ describe('POST /pollution_data',() => {
             if (err) {
                 return done(err);
             }
-            expect(res.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
-            return done();
+            try {
+                expect(res.body.message).toMatch("Please send a POST with the body: { country: 'countryname', state: 'statename', city: 'cityName' } to /pollution_data to get a cities pollution_data");
+                done();
+            } catch(error) {
+                done(error);
+            }
         });
     });
 
     it('returns "No data found for chosen city" if invalid city is entered', (done) : void => {
+        const stub = sinon.stub(api, 'getPollutionData').rejects();
+
         request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Britol' }).end((err: Error, res: any) => {
             if (err) {
+                stub.restore();
                 return done(err);
             }
-            expect(res.body.message).toMatch("No data found for chosen city");
-            return done();
+            try {
+                stub.restore();
+                expect(res.body.message).toMatch("No data found for chosen city");
+                done();
+            } catch(error) {
+                stub.restore();
+                done(error);
+            }
         });
     });
 
-    it('should respond with 429 status and error message when more than 2 requests are sent per minute', (done) : void => {
-        for (const i of [...Array(2)]) {
-            request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).end(() => done());
-        }
-        request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).end((err: Error, res: any) => {
-            if (err) {
-                return done(err);
+    it('should respond with 429 status and error message when more than 2 requests are sent per minute', async () : Promise<void> => {
+        rateLimter.liveDataLimiter.callsFake(originalLiveDataLimiter);
+        rateLimter.defaultLimiter.callsFake(originalDefaultLimiter);
+        const stub = sinon.stub(api, 'getPollutionData').resolves({
+            "data": {
+                "status": "success",
+                "data": {
+                    "city": "Bristol",
+                    "state": "England",
+                    "country": "United Kingdom",
+                    "current": {
+                        "pollution": {
+                            "ts": "2023-06-06T12:00:00.000Z",
+                            "aqius": 20
+                        }
+                    }
+                }
             }
-            expect(res.error.text).toMatch(/Too many requests/i);
-            return done();
         });
+
+        for (const i of [...Array(10)]) {
+            await request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' });
+        }
+        const response = await request(app).post('/pollution_data').send({ country: 'United Kingdom', state: 'England', city: 'Bristol' }).expect(429);
+        expect(response.error.text).toMatch(/Too many requests/i);
     });
 })
