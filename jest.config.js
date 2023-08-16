@@ -5,5 +5,6 @@ module.exports = {
   testMatch: [
     "**/__tests__/**/*.ts?(x)", "**/?(*.)+(spec|test).ts?(x)"
   ],
-  slowTestThreshold: 120
+  slowTestThreshold: 120,
+  setupFilesAfterEnv: ['./jest.setup.redis-mock.js']
 };
